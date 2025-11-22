@@ -12,7 +12,7 @@ public class ClassesPanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Table
-        String[] columns = {"ID", "Class Name", "Level", "Teacher"};
+        String[] columns = {"ID", "Class Name", "Course", "Teacher"};
         Object[][] data = {}; // Empty for now
         classTable = new JTable(data, columns);
         add(new JScrollPane(classTable), BorderLayout.CENTER);
