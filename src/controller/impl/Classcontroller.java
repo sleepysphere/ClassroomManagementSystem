@@ -1,5 +1,5 @@
 package controller.impl;
 
-public class Classcontroller {
+public class ClassController {
     
 }
