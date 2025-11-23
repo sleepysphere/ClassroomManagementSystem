@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class ScheduleRepositorySQL {
-    public ScheduleRepositorySQL() {} // Prevent instantiation
+    private ScheduleRepositorySQL() {} // Prevent instantiation
     
     public static boolean addSchedule(Schedule schedule) {
         // SQL query to insert a new schedule
