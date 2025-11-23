@@ -6,46 +6,29 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    private static Connection conn;
-
     private static final String URL = "jdbc:mysql://localhost:3306/class_management";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "root";
 
     private DBConnection() {} // Prevent instantiation
 
-    public static boolean connect() {
+
+    public static Connection getConnection() throws SQLException {
         try {
-            // 🔹 IMPORTANT: Load MySQL JDBC driver
+            // 🔹 Load MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // 🔹 Now connect to database
-            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Database Connected Successfully!");
-            return true;
-
+            
+            // 🔹 Create and return new connection
+            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            
         } catch (ClassNotFoundException e) {
-            System.err.println("MySQL JDBC Driver not found! Add the JAR to project.");
-            return false;
-
-        } catch (SQLException e) {
-            System.err.println("Connection Failed: " + e.getMessage());
-            return false;
+            throw new SQLException("MySQL JDBC Driver not found! Add the JAR to project.", e);
         }
-    }
-
-    public static Connection getConnection() {
-        return conn;
     }
 
     public static void disconnect() {
-        try {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-                System.out.println("Database Disconnected Successfully!");
-            }
-        } catch (SQLException e) {
-            System.err.println("Failed to disconnect: " + e.getMessage());
-        }
+        // This method is no longer needed since connections are created per request
+        // Users should close connections in try-with-resources or finally blocks
+        System.out.println("Note: Close connections using try-with-resources or conn.close()");
     }
 }
