@@ -6,6 +6,7 @@ import repository.sql.*;
 import javax.swing.SwingUtilities;
 import java.sql.SQLException;
 import java.time.LocalTime;
+import java.time.LocalDate;
 
 
 public class Main {
@@ -26,8 +27,11 @@ public class Main {
         Schedule testSchedule = new Schedule(
             0,                  // ClassID (0 for new entry)
             1,                  // CourseID
-            1,                  // RoomID
             1,                  // InstructorID
+            "Lecture",          
+            LocalDate.of(2024, 9, 1), // StartDate
+            LocalDate.of(2024, 12, 15), // EndDate
+            1,                  // RoomID
             "Monday",           // DayOfWeek
             LocalTime.of(8, 0), // StartTime
             LocalTime.of(10, 0), // EndTime
