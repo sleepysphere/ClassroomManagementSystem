@@ -20,15 +20,26 @@ public class Main {
             System.exit(0);
         }
 
-        Room testRoom = new Room(0, "A101", "CLASSROOM", 30);
+        // Create a test Course object
+        // Constructor: ID, Name, Code, Description, Credits, RequiresLab, SessionCount, EnrollmentLimit
+        Course testCourse = new Course(
+            0, 
+            "Intro to Java", 
+            "CS101", 
+            "Basic Java Programming concepts", 
+            3.0, 
+            true, 
+            15, 
+            30
+        );
 
-        // Try to add the room to the database
-        boolean result = RoomRepositorySQL.addRoom(testRoom);
+        // Try to add the course to the database
+        boolean result = CourseRepositorySQL.addCourse(testCourse);
         
         if (result) {
             System.out.println("Success!");
         } else {
-            System.out.println("Failed to add room.");
+            System.out.println("Failed to add course.");
         }
 
         // If connected → load GUI
