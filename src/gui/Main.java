@@ -1,11 +1,11 @@
 package gui;
 
 import database.DBConnection;
-import model.Student;
-import repository.sql.StudentRepository;
+import model.*;
+import repository.sql.*;
 import javax.swing.SwingUtilities;
 import java.sql.SQLException;
-import java.time.LocalDate;
+
 
 public class Main {
 
@@ -20,23 +20,15 @@ public class Main {
             System.exit(0);
         }
 
-        // Create a test student with dummy data (matching Student constructor pattern)
-        Student testStudent = new Student(
-            0,                              // ID (0 for new student)
-            "John",                         // First name
-            "Doe",                          // Last name
-            "555-123-4567",                 // Phone
-            "john.doe@test.com",            // Email
-            LocalDate.of(2000, 5, 15)       // Date of birth
-        );
+        Room testRoom = new Room(0, "A101", "CLASSROOM", 30);
 
-        // Try to add the student to the database
-        boolean result = StudentRepository.addStudent(testStudent);
+        // Try to add the room to the database
+        boolean result = RoomRepositorySQL.addRoom(testRoom);
         
         if (result) {
             System.out.println("Success!");
         } else {
-            System.out.println("Failed to add student.");
+            System.out.println("Failed to add room.");
         }
 
         // If connected → load GUI

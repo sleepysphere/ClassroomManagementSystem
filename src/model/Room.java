@@ -1,25 +1,26 @@
 package model;
 
 public class Room {
-    private int id;
-    private String name;
-    private RoomType type; // CLASSROOM, LAB, GYM
-    private int capacity;
+    private int RoomID;
+    private String RoomNumber;
+    private String RoomType; // CLASSROOM, LAB, GYM
+    private int Capacity;
 
-    public Room(int id, String name, RoomType type, int capacity) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.capacity = capacity;
+    public Room(int RoomID, String RoomNumber, String RoomType, int Capacity) {
+        this.RoomID = RoomID;
+        this.RoomNumber = RoomNumber;
+        this.RoomType = RoomType;
+        this.Capacity = Capacity;
     }
 
-    public int getId() { return id; }
-    public String getName() { return name; }
-    public RoomType getType() { return type; }
-    public int getCapacity() { return capacity; }
+    public int getRoomID() { return RoomID; }
+    public String getRoomNumber() { return RoomNumber; }
+    public String getRoomType() { return RoomType; }
+    public int getCapacity() { return Capacity; }
 
-    public void setName(String name) { this.name = name; }
-    public void setType(RoomType type) { this.type = type; }
-    public void setCapacity(int capacity) { this.capacity = capacity; }
+    public void setRoomID(int RoomID) { this.RoomID = RoomID; }
+    public void setRoomNumber(String RoomNumber) { this.RoomNumber = RoomNumber; }
+    public void setRoomType(String RoomType) { this.RoomType = RoomType; }
+    public void setCapacity(int Capacity) { this.Capacity = Capacity; }
 }
 

@@ -6,8 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class StudentRepository {
-    private StudentRepository() {} // Prevent instantiation
+public class StudentRepositorySQL {
+    private StudentRepositorySQL() {} // Prevent instantiation
     
     public static boolean addStudent(Student student) {
         String sql = "INSERT INTO students (FirstName, LastName, Email, DateOfBirth, Phone) VALUES (?, ?, ?, ?, ?)";
