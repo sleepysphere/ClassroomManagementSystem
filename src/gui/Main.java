@@ -5,7 +5,7 @@ import model.*;
 import repository.sql.*;
 import javax.swing.SwingUtilities;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 public class Main {
@@ -21,25 +21,26 @@ public class Main {
             System.exit(0);
         }
 
-        // Create a test Instructor object
-        // Constructor: ID, Name, Code, Description, Credits, RequiresLab, SessionCount, EnrollmentLimit
-        Instructor testInstructor = new Instructor(
-            0, 
-            "John", 
-            "Doe", 
-            "john.doe@example.com", 
-            "555-1234", 
-            "Computer Science", 
-            LocalDate.of(2020, 1, 15)
+        // Create a test Schedule object
+        // Constructor: ClassID, CourseID, RoomID, InstructorID, Day, StartTime, EndTime
+        Schedule testSchedule = new Schedule(
+            0,                  // ClassID (0 for new entry)
+            1,                  // CourseID
+            1,                  // RoomID
+            1,                  // InstructorID
+            "Monday",           // DayOfWeek
+            LocalTime.of(8, 0), // StartTime
+            LocalTime.of(10, 0), // EndTime
+            "Fall 2024"          // Semester
         );
 
-        // Try to add the instructor to the database
-        boolean result = InstructorRepositorySQL.addInstructor(testInstructor);
+        // Try to add the schedule to the database
+        boolean result = ScheduleRepositorySQL.addSchedule(testSchedule);
         
         if (result) {
             System.out.println("Success!");
         } else {
-            System.out.println("Failed to add course.");
+            System.out.println("Failed to add schedule.");
         }
 
         // If connected → load GUI
