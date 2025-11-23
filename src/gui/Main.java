@@ -5,6 +5,7 @@ import model.*;
 import repository.sql.*;
 import javax.swing.SwingUtilities;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 
 public class Main {
@@ -20,21 +21,20 @@ public class Main {
             System.exit(0);
         }
 
-        // Create a test Course object
+        // Create a test Instructor object
         // Constructor: ID, Name, Code, Description, Credits, RequiresLab, SessionCount, EnrollmentLimit
-        Course testCourse = new Course(
+        Instructor testInstructor = new Instructor(
             0, 
-            "Intro to Java", 
-            "CS101", 
-            "Basic Java Programming concepts", 
-            3.0, 
-            true, 
-            15, 
-            30
+            "John", 
+            "Doe", 
+            "john.doe@example.com", 
+            "555-1234", 
+            "Computer Science", 
+            LocalDate.of(2020, 1, 15)
         );
 
-        // Try to add the course to the database
-        boolean result = CourseRepositorySQL.addCourse(testCourse);
+        // Try to add the instructor to the database
+        boolean result = InstructorRepositorySQL.addInstructor(testInstructor);
         
         if (result) {
             System.out.println("Success!");
