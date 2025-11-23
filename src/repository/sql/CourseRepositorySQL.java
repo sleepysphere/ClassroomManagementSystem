@@ -10,8 +10,8 @@ public class CourseRepositorySQL {
     private CourseRepositorySQL() {} // Prevent instantiation
     
     public static boolean addCourse(Course course) {
-        // SQL query to insert a new room
-        // We exclude RoomID assuming it is AUTO_INCREMENT in the database
+        // SQL query to insert a new course
+        // We exclude CourseID assuming it is AUTO_INCREMENT in the database
         String sql = "INSERT INTO courses (CourseCode, CourseName, Credits, Description, EnrollmentLimit, RequiresLab, SessionCount) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBConnection.getConnection();
