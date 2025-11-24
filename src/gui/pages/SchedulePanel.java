@@ -7,47 +7,10 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import model.ClassSchedule;
-import repository.ScheduleRepository;
-import repository.mock.ScheduleRepositoryMOCK;
+import repository.*;
 
 public class SchedulePanel extends JPanel {
 
-<<<<<<< HEAD
-    private JTable classTable;
-    private JButton addButton, editButton, deleteButton;
-
-    public SchedulePanel() {
-        setLayout(new BorderLayout());
-        add(new JLabel("Schedule Management - Coming Soon", SwingConstants.CENTER),
-            BorderLayout.CENTER);
-
-         // Button controls
-        JPanel buttonPanel = new JPanel();
-        addButton = new JButton("Add");
-        editButton = new JButton("Edit");
-        deleteButton = new JButton("Delete");
-
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        setupButtonHandlers();
-    }
-
-    private void setupButtonHandlers() {
-        addButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Add Class (not yet implemented)")
-        );
-
-        editButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Edit Class (not yet implemented)")
-        );
-
-        deleteButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Delete Class (not yet implemented)")
-        );
-=======
     private JTable scheduleTable;
     private DefaultTableModel tableModel;
     private JButton addButton, deleteButton, refreshButton, todayButton;
@@ -57,7 +20,7 @@ public class SchedulePanel extends JPanel {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public SchedulePanel() {
-        scheduleRepository = new ScheduleRepositoryMOCK();
+        scheduleRepository = new ScheduleRepository();
         
         setLayout(new BorderLayout(15, 15));
         setBackground(MainFrame.BACKGROUND_COLOR);
@@ -379,7 +342,6 @@ public class SchedulePanel extends JPanel {
             g2.fillRoundRect(x, y, width - 1, height - 1, radius, radius);
             g2.dispose();
         }
->>>>>>> dc6678f18732aeca40dd4fa8a80d0cf312834a2f
     }
 }
 

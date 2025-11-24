@@ -6,17 +6,7 @@ import javax.swing.*;
 
 public class DashboardPanel extends JPanel {
 
-    private JTable classTable;
-    private JButton addButton, editButton, deleteButton;
-
     public DashboardPanel() {
-<<<<<<< HEAD
-        setLayout(new BorderLayout());
-        JLabel label = new JLabel("Class Management DashBoard", SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 24));
-        add(label, BorderLayout.CENTER);
-
-=======
         setLayout(new BorderLayout(20, 20));
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -92,7 +82,5 @@ public class DashboardPanel extends JPanel {
         card.add(titleLabel);
         
         return card;
->>>>>>> dc6678f18732aeca40dd4fa8a80d0cf312834a2f
     }
-    
 }

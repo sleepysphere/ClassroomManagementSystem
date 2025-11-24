@@ -5,45 +5,19 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import model.Room;
-import model.RoomType;
-import repository.RoomRepository;
-import repository.mock.RoomRepositoryMOCK;
+import repository.*;
 
 public class RoomsPanel extends JPanel {
 
-<<<<<<< HEAD
-    private JTable classTable;
-    private JButton addButton, editButton, deleteButton;
-
-    public RoomsPanel() {
-
-        String[] columns = {"Room ID","Room Number","Room Type","Capacity"};
-        Object[][] data = {}; // Empty for now
-        classTable = new JTable(data, columns);
-        add(new JScrollPane(classTable), BorderLayout.CENTER);
-
-         // Button controls
-        JPanel buttonPanel = new JPanel();
-        addButton = new JButton("Add");
-        editButton = new JButton("Edit");
-        deleteButton = new JButton("Delete");
-
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        setupButtonHandlers();
-=======
     private JTable roomTable;
     private DefaultTableModel tableModel;
     private JButton addButton, editButton, deleteButton, refreshButton;
     
-    private RoomRepository roomRepository;
+    private RoomRepository RoomRepository;
     private int nextId = 1;
 
     public RoomsPanel() {
-        roomRepository = new RoomRepositoryMOCK();
+        RoomRepository = new RoomRepository();
         
         setLayout(new BorderLayout(15, 15));
         setBackground(MainFrame.BACKGROUND_COLOR);
@@ -52,8 +26,7 @@ public class RoomsPanel extends JPanel {
         add(createHeaderPanel(), BorderLayout.NORTH);
         add(createTablePanel(), BorderLayout.CENTER);
         add(createButtonPanel(), BorderLayout.SOUTH);
-        
-        loadSampleData();
+
         refreshTable();
     }
 
@@ -220,7 +193,7 @@ public class RoomsPanel extends JPanel {
         
         JLabel typeLabel = new JLabel("Room Type:");
         typeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        JComboBox<RoomType> typeCombo = new JComboBox<>(RoomType.values());
+        JComboBox<Room> typeCombo = new JComboBox<>(Room.values());
         typeCombo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         JLabel capacityLabel = new JLabel("Capacity:");
@@ -262,9 +235,9 @@ public class RoomsPanel extends JPanel {
                 return;
             }
             
-            RoomType type = (RoomType) typeCombo.getSelectedItem();
+            Room type = (Room) typeCombo.getSelectedItem();
             Room newRoom = new Room(nextId++, name, type, capacity);
-            roomRepository.save(newRoom);
+            RoomRepository.save(newRoom);
             
             refreshTable();
             dialog.dispose();
@@ -290,7 +263,7 @@ public class RoomsPanel extends JPanel {
         }
         
         int roomId = (int) tableModel.getValueAt(selectedRow, 0);
-        Room selectedRoom = roomRepository.findById(roomId);
+        Room selectedRoom = RoomRepository.findById(roomId);
         
         if (selectedRoom == null) {
             JOptionPane.showMessageDialog(this, "Room not found!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -308,13 +281,13 @@ public class RoomsPanel extends JPanel {
         
         JLabel nameLabel = new JLabel("Room Name:");
         nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        JTextField nameField = new JTextField(selectedRoom.getName());
+        JTextField nameField = new JTextField(selectedRoom.getRoomNumber());
         nameField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         JLabel typeLabel = new JLabel("Room Type:");
         typeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         JComboBox<RoomType> typeCombo = new JComboBox<>(RoomType.values());
-        typeCombo.setSelectedItem(selectedRoom.getType());
+        typeCombo.setSelectedItem(selectedRoom.getRoomType());
         typeCombo.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         JLabel capacityLabel = new JLabel("Capacity:");
@@ -356,8 +329,8 @@ public class RoomsPanel extends JPanel {
                 return;
             }
             
-            selectedRoom.setName(name);
-            selectedRoom.setType((RoomType) typeCombo.getSelectedItem());
+            selectedRoom.setRoomNumber(name);
+            selectedRoom.setRoomType((RoomType) typeCombo.getSelectedItem());
             selectedRoom.setCapacity(capacity);
             
             refreshTable();
@@ -402,22 +375,15 @@ public class RoomsPanel extends JPanel {
     private void refreshTable() {
         tableModel.setRowCount(0);
         
-        for (Room room : roomRepository.findAll()) {
+        for (Room room : RoomRepository.findAll()) {
             Object[] row = {
                 room.getId(),
-                room.getName(),
-                room.getType().toString(),
+                room.getRoomNumber(),
+                room.getRoomType().toString(),
                 room.getCapacity()
             };
             tableModel.addRow(row);
         }
-    }
-    
-    private void loadSampleData() {
-        roomRepository.save(new Room(nextId++, "Room A101", RoomType.CLASSROOM, 40));
-        roomRepository.save(new Room(nextId++, "Lab B201", RoomType.LAB, 30));
-        roomRepository.save(new Room(nextId++, "Gym Hall", RoomType.GYM, 100));
-        roomRepository.save(new Room(nextId++, "Room C301", RoomType.CLASSROOM, 35));
     }
     
     // Rounded border for buttons
@@ -443,21 +409,5 @@ public class RoomsPanel extends JPanel {
             g2.fillRoundRect(x, y, width - 1, height - 1, radius, radius);
             g2.dispose();
         }
->>>>>>> dc6678f18732aeca40dd4fa8a80d0cf312834a2f
     }
-
-    private void setupButtonHandlers() {
-        addButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Add (not yet implemented)")
-        );
-
-        editButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Edit (not yet implemented)")
-        );
-
-        deleteButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Delete (not yet implemented)")
-        );
-    }
-
 }

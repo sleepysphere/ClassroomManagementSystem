@@ -6,43 +6,7 @@ import javax.swing.*;
 
 public class TeachersPanel extends JPanel {
 
-    private JTable classTable;
-    private JButton addButton, editButton, deleteButton;
-
     public TeachersPanel() {
-<<<<<<< HEAD
-        String[] columns = {"Teacher ID","First Name","Last Name","Email","Phone","Department","Hire Date"};
-        Object[][] data = {}; // Empty for now
-        classTable = new JTable(data, columns);
-        add(new JScrollPane(classTable), BorderLayout.CENTER);
-
-         // Button controls
-        JPanel buttonPanel = new JPanel();
-        addButton = new JButton("Add");
-        editButton = new JButton("Edit");
-        deleteButton = new JButton("Delete");
-
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        setupButtonHandlers();
-    }
-
-    private void setupButtonHandlers() {
-        addButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Add Class (not yet implemented)")
-        );
-
-        editButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Edit Class (not yet implemented)")
-        );
-
-        deleteButton.addActionListener(e ->
-            JOptionPane.showMessageDialog(this, "Delete Class (not yet implemented)")
-        );
-=======
         setLayout(new BorderLayout(15, 15));
         setBackground(MainFrame.BACKGROUND_COLOR);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -109,6 +73,5 @@ public class TeachersPanel extends JPanel {
         
         panel.add(contentPanel);
         return panel;
->>>>>>> dc6678f18732aeca40dd4fa8a80d0cf312834a2f
     }
 }

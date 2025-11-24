@@ -5,8 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import model.SchoolClass;
-import repository.ClassRepository;
-import repository.mock.ClassRepositoryMOCK;
+import repository.*;
 
 public class ClassesPanel extends JPanel {
 
@@ -15,28 +14,11 @@ public class ClassesPanel extends JPanel {
     private JButton addButton, editButton, deleteButton, refreshButton;
     
     // Repository for data storage (using MOCK for demo)
-    private ClassRepository classRepository;
+    private ClassRepository ClassRepository;
     private int nextId = 1; // Auto-increment ID
 
     public ClassesPanel() {
-<<<<<<< HEAD
-        // Table
-        String[] columns = {"Class ID","Course ID","Instrucor ID","Class Time","Semester"};
-        Object[][] data = {}; // Empty for now
-        classTable = new JTable(data, columns);
-        add(new JScrollPane(classTable), BorderLayout.CENTER);
-
-        // Button controls
-        JPanel buttonPanel = new JPanel();
-        addButton = new JButton("Add");
-        editButton = new JButton("Edit");
-        deleteButton = new JButton("Delete");
-
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
-=======
-        classRepository = new ClassRepositoryMOCK();
+        ClassRepository = new ClassRepository();
         
         setLayout(new BorderLayout(15, 15));
         setBackground(MainFrame.BACKGROUND_COLOR);
@@ -52,11 +34,7 @@ public class ClassesPanel extends JPanel {
         
         // Button panel
         JPanel buttonPanel = createButtonPanel();
->>>>>>> dc6678f18732aeca40dd4fa8a80d0cf312834a2f
         add(buttonPanel, BorderLayout.SOUTH);
-        
-        // Load sample data
-        loadSampleData();
         refreshTable();
     }
 
@@ -276,7 +254,7 @@ public class ClassesPanel extends JPanel {
             
             // Create new class
             SchoolClass newClass = new SchoolClass(nextId++, name, labCheckBox.isSelected(), studentCount);
-            classRepository.save(newClass);
+            ClassRepository.save(newClass);
             
             refreshTable();
             dialog.dispose();
@@ -302,7 +280,7 @@ public class ClassesPanel extends JPanel {
         }
         
         int classId = (int) tableModel.getValueAt(selectedRow, 0);
-        SchoolClass selectedClass = classRepository.findById(classId);
+        SchoolClass selectedClass = ClassRepository.findById(classId);
         
         if (selectedClass == null) {
             JOptionPane.showMessageDialog(this, "Class not found!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -416,7 +394,7 @@ public class ClassesPanel extends JPanel {
     private void refreshTable() {
         tableModel.setRowCount(0);
         
-        for (SchoolClass schoolClass : classRepository.findAll()) {
+        for (SchoolClass schoolClass : ClassRepository.findAll()) {
             Object[] row = {
                 schoolClass.getId(),
                 schoolClass.getName(),
@@ -425,14 +403,6 @@ public class ClassesPanel extends JPanel {
             };
             tableModel.addRow(row);
         }
-    }
-    
-    private void loadSampleData() {
-        // Add sample data for demo
-        classRepository.save(new SchoolClass(nextId++, "Math 101", false, 30));
-        classRepository.save(new SchoolClass(nextId++, "Physics Lab", true, 25));
-        classRepository.save(new SchoolClass(nextId++, "English Literature", false, 28));
-        classRepository.save(new SchoolClass(nextId++, "Chemistry Lab", true, 20));
     }
     
     // Rounded border for buttons

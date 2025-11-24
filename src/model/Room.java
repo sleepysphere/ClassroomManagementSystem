@@ -23,6 +23,7 @@ public class Room {
     public String getRoomNumber() { return RoomNumber; }
     public String getRoomType() { return RoomType; }
     public int getCapacity() { return Capacity; }
+    public int getId() { return RoomID; }
 
     public void setRoomID(int RoomID) { this.RoomID = RoomID; }
     public void setRoomNumber(String RoomNumber) { this.RoomNumber = RoomNumber; }

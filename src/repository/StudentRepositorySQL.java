@@ -1,4 +1,4 @@
-package repository.sql;
+package repository;
 
 import database.DBConnection;
 import model.Student;

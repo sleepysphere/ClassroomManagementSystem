@@ -1,4 +1,4 @@
-package repository.sql;
+package repository;
 
 import database.DBConnection;
 import model.Instructor;
@@ -6,8 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class InstructorRepositorySQL {
-    private InstructorRepositorySQL() {} // Prevent instantiation
+public class InstructorRepository {
+    private InstructorRepository() {} // Prevent instantiation
     
     public static boolean addInstructor(Instructor instructor) {
         String sql = "INSERT INTO instructors (FirstName, LastName, Email, HireDate, Phone, Department) VALUES (?, ?, ?, ?, ?, ?)";
