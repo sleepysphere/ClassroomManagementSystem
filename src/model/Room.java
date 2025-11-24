@@ -13,6 +13,12 @@ public class Room {
         this.Capacity = Capacity;
     }
 
+    public enum RoomType {
+        CLASSROOM,
+        LAB,
+        GYM
+    }
+
     public int getRoomID() { return RoomID; }
     public String getRoomNumber() { return RoomNumber; }
     public String getRoomType() { return RoomType; }

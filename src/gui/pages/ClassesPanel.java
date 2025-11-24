@@ -9,10 +9,8 @@ public class ClassesPanel extends JPanel {
     private JButton addButton, editButton, deleteButton;
 
     public ClassesPanel() {
-        setLayout(new BorderLayout());
-
         // Table
-        String[] columns = {"ID", "Class Name", "Course", "Teacher"};
+        String[] columns = {"Class ID","Course ID","Instrucor ID","Class Time","Semester"};
         Object[][] data = {}; // Empty for now
         classTable = new JTable(data, columns);
         add(new JScrollPane(classTable), BorderLayout.CENTER);
