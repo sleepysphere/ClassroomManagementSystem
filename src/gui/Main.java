@@ -22,36 +22,22 @@ public class Main {
             System.exit(0);
         }
 
-        // Create a test Schedule object
-        // Constructor: ClassID, CourseID, RoomID, InstructorID, Day, StartTime, EndTime
-        Schedule testSchedule = new Schedule(
-            0,                  // ClassID (0 for new entry)
-            1,                  // CourseID
-            1,                  // InstructorID
-            "Lecture",          
-            LocalDate.of(2024, 9, 1), // StartDate
-            LocalDate.of(2024, 12, 15), // EndDate
-            1,                  // RoomID
-            "Monday",           // DayOfWeek
-            LocalTime.of(8, 0), // StartTime
-            LocalTime.of(10, 0), // EndTime
-            "Fall 2024"          // Semester
+        System.out.println("\n--- Attempting to Cancel a Class ---");
+        ScheduleException cancelRequest = new ScheduleException(
+            0, 1, java.time.LocalDate.now().plusDays(1), "Cancelled", null, null, null, 0
         );
 
-        // Try to add the schedule to the database
-        boolean result = ScheduleRepositorySQL.addSchedule(testSchedule);
-        
-        if (result) {
-            System.out.println("Success!");
+        if (ScheduleExceptionRepositorySQL.addScheduleException(cancelRequest)) {
+            System.out.println("Class Cancelled Successfully!");
         } else {
-            System.out.println("Failed to add schedule.");
+            System.out.println("Cancellation Failed.");
         }
 
         // If connected → load GUI
-        SwingUtilities.invokeLater(() -> {
-            MainFrame mainFrame = new MainFrame();
-            mainFrame.setVisible(true);
-        });
+        //SwingUtilities.invokeLater(() -> {
+        //    MainFrame mainFrame = new MainFrame();
+        //    mainFrame.setVisible(true);
+        //});
 
         // Ensure DB disconnect when app closes
         Runtime.getRuntime().addShutdownHook(new Thread(DBConnection::disconnect));
