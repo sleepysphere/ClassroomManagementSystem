@@ -2,7 +2,7 @@ package gui;
 
 import database.DBConnection;
 import model.*;
-import repository.*;
+import repository.sql.*;
 import javax.swing.SwingUtilities;
 import java.sql.SQLException;
 import java.time.LocalTime;
@@ -20,6 +20,31 @@ public class Main {
             System.out.println("App cannot start without database connection.");
             e.printStackTrace();
             System.exit(0);
+        }
+
+        // Create a test Schedule object
+        // Constructor: ClassID, CourseID, RoomID, InstructorID, Day, StartTime, EndTime
+        Schedule testSchedule = new Schedule(
+            0,                  // ClassID (0 for new entry)
+            1,                  // CourseID
+            1,                  // InstructorID
+            "Lecture",          
+            LocalDate.of(2024, 9, 1), // StartDate
+            LocalDate.of(2024, 12, 15), // EndDate
+            1,                  // RoomID
+            "Monday",           // DayOfWeek
+            LocalTime.of(8, 0), // StartTime
+            LocalTime.of(10, 0), // EndTime
+            "Fall 2024"          // Semester
+        );
+
+        // Try to add the schedule to the database
+        boolean result = ScheduleRepositorySQL.addSchedule(testSchedule);
+        
+        if (result) {
+            System.out.println("Success!");
+        } else {
+            System.out.println("Failed to add schedule.");
         }
 
         // If connected → load GUI
