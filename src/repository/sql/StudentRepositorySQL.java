@@ -31,4 +31,52 @@ public class StudentRepositorySQL {
             return false;
         }
     }
+    
+    // ---------------------------------------------------------
+    // DELETE: Remove a student (Automatically drops all their classes)
+    // ---------------------------------------------------------
+    public static boolean deleteStudent(int studentId) {
+        String sql = "DELETE FROM students WHERE StudentID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, studentId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error deleting student: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ---------------------------------------------------------
+    // UPDATE: Modify student details (Name, Email, Phone, etc.)
+    // ---------------------------------------------------------
+    public static boolean updateStudent(Student student) {
+        // Logic: Overwrite all fields for the specific StudentID
+        String sql = "UPDATE students SET FirstName=?, LastName=?, Email=?, DateOfBirth=?, Phone=? WHERE StudentID=?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, student.getFirstName());
+            stmt.setString(2, student.getLastName());
+            stmt.setString(3, student.getEmail());
+            stmt.setDate(4, java.sql.Date.valueOf(student.getDateOfBirth()));
+            stmt.setString(5, student.getPhone());
+            
+            // The Target ID (Where clause)
+            stmt.setInt(6, student.getStudentID());
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error updating student: " + e.getMessage());
+            return false;
+        }
+    }
 }

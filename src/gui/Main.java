@@ -24,35 +24,34 @@ public class Main {
 
         System.out.println("\n--- Testing UPDATE & DELETE ---");
 
-        // 1. Let's assume ClassID 1 exists (from your previous tests). 
-        // Let's move it to Room #2 (Make sure RoomID 2 exists in your DB first!)
-        // We create a Schedule object with the SAME ID (1) but NEW data.
-        Schedule updatedClass = new Schedule(
-            1, // Target ClassID 1
-            1, 1, "Lecture", 
-            java.time.LocalDate.of(2025, 1, 1), 
-            java.time.LocalDate.of(2025, 5, 1), 
-            2, // <--- CHANGING ROOM TO ID 2
-            "Friday", 
-            java.time.LocalTime.of(14, 0), 
-            java.time.LocalTime.of(16, 0), 
-            "SS2026"
+        System.out.println("\n--- Testing STUDENT Update & Delete ---");
+
+        // 1. Create a Student object with the SAME ID (1) but NEW details
+        // (Assume we are changing their name to "Updated Name")
+        Student updatedStudent = new Student(
+            1, // Target StudentID 1
+            "Updated", 
+            "Name", 
+            "555-999-9999", 
+            "updated.email@test.com", 
+            java.time.LocalDate.of(2000, 1, 1)
         );
 
         // TEST UPDATE
-        if (ScheduleRepositorySQL.updateSchedule(updatedClass)) {
-            System.out.println("Update Successful: Class 1 moved to Room 2.");
+        if (StudentRepositorySQL.updateStudent(updatedStudent)) {
+            System.out.println("Student 1 Updated Successfully!");
         } else {
-            System.out.println("Update Failed (Does Class 1 or Room 2 exist?)");
+            System.out.println("Update Failed.");
         }
 
         // TEST DELETE
-        if (ScheduleRepositorySQL.deleteSchedule(1)) {
-            System.out.println("Delete Successful: Class 1 removed.");
+        // (Warning: This will also delete their Enrollments!)
+        if (StudentRepositorySQL.deleteStudent(1)) {
+            System.out.println("Student 1 Deleted Successfully!");
         } else {
             System.out.println("Delete Failed.");
         }
-        
+
         // If connected → load GUI
         //SwingUtilities.invokeLater(() -> {
         //    MainFrame mainFrame = new MainFrame();
