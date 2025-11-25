@@ -31,7 +31,36 @@ public class StudentRepositorySQL {
             return false;
         }
     }
-    
+
+    // ---------------------------------------------------------
+    // READ: Get a single student by ID
+    // ---------------------------------------------------------
+    public static Student getStudentById(int studentId) {
+        String sql = "SELECT * FROM students WHERE StudentID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, studentId);
+            
+            var rs = stmt.executeQuery();
+            if (rs.next()) {
+                // Map the DB row back to a Java Object
+                return new Student(
+                    rs.getInt("StudentID"),
+                    rs.getString("FirstName"),
+                    rs.getString("LastName"),
+                    rs.getString("Phone"),
+                    rs.getString("Email"),
+                    rs.getDate("DateOfBirth") != null ? rs.getDate("DateOfBirth").toLocalDate() : null
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching student: " + e.getMessage());
+        }
+        return null; // Return null if not found
+    }
+
     // ---------------------------------------------------------
     // DELETE: Remove a student (Automatically drops all their classes)
     // ---------------------------------------------------------

@@ -32,4 +32,53 @@ public class InstructorRepositorySQL {
             return false;
         }
     }
+    
+    // ---------------------------------------------------------
+    // DELETE: Remove an instructor
+    // (Warning: This will CASCADE delete all their classes!)
+    // ---------------------------------------------------------
+    public static boolean deleteInstructor(int instructorId) {
+        String sql = "DELETE FROM instructors WHERE InstructorID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, instructorId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error deleting instructor: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ---------------------------------------------------------
+    // UPDATE: Modify instructor details
+    // ---------------------------------------------------------
+    public static boolean updateInstructor(Instructor instructor) {
+        String sql = "UPDATE instructors SET FirstName=?, LastName=?, Email=?, HireDate=?, Phone=?, Department=? WHERE InstructorID=?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, instructor.getFirstName());
+            stmt.setString(2, instructor.getLastName());
+            stmt.setString(3, instructor.getEmail());
+            stmt.setDate(4, java.sql.Date.valueOf(instructor.getHireDate()));
+            stmt.setString(5, instructor.getPhone());
+            stmt.setString(6, instructor.getDepartment());
+            
+            // Target ID
+            stmt.setInt(7, instructor.getInstructorId());
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error updating instructor: " + e.getMessage());
+            return false;
+        }
+    }
 }

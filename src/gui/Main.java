@@ -24,30 +24,31 @@ public class Main {
 
         System.out.println("\n--- Testing UPDATE & DELETE ---");
 
-        System.out.println("\n--- Testing STUDENT Update & Delete ---");
+        System.out.println("\n--- Testing INSTRUCTOR Update & Delete ---");
 
-        // 1. Create a Student object with the SAME ID (1) but NEW details
-        // (Assume we are changing their name to "Updated Name")
-        Student updatedStudent = new Student(
-            1, // Target StudentID 1
+        // 1. Create a dummy Instructor to test with (ID 99 just to be safe/distinct)
+        // Note: In a real app, you'd add them, getting the ID back. 
+        // For this test, ensure you have an instructor with ID 1, or change the ID below.
+        Instructor updatedProf = new Instructor(
+            1, // Target InstructorID 1
+            "Professor", 
             "Updated", 
-            "Name", 
-            "555-999-9999", 
-            "updated.email@test.com", 
-            java.time.LocalDate.of(2000, 1, 1)
+            "updated.prof@univ.edu", 
+            "555-000-0000", 
+            "Quantum Physics", // Changed Department
+            java.time.LocalDate.of(2020, 9, 1)
         );
-
+        
         // TEST UPDATE
-        if (StudentRepositorySQL.updateStudent(updatedStudent)) {
-            System.out.println("Student 1 Updated Successfully!");
+        if (InstructorRepositorySQL.updateInstructor(updatedProf)) {
+            System.out.println("Instructor 1 Updated Successfully!");
         } else {
-            System.out.println("Update Failed.");
+            System.out.println("Update Failed (Does Instructor 1 exist?).");
         }
-
+        
         // TEST DELETE
-        // (Warning: This will also delete their Enrollments!)
-        if (StudentRepositorySQL.deleteStudent(1)) {
-            System.out.println("Student 1 Deleted Successfully!");
+        if (InstructorRepositorySQL.deleteInstructor(1)) {
+            System.out.println("Instructor 1 Deleted Successfully!");
         } else {
             System.out.println("Delete Failed.");
         }

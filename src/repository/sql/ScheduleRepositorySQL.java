@@ -37,7 +37,40 @@ public class ScheduleRepositorySQL {
             return false;
         }
     }
-    
+
+    // ---------------------------------------------------------
+    // READ: Get a single schedule by ID
+    // ---------------------------------------------------------
+    public static Schedule getScheduleById(int classId) {
+        String sql = "SELECT * FROM schedules WHERE ClassID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, classId);
+            
+            var rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Schedule(
+                    rs.getInt("ClassID"),
+                    rs.getInt("CourseID"),
+                    rs.getInt("InstructorID"),
+                    rs.getString("SessionType"),
+                    rs.getDate("StartDate").toLocalDate(),
+                    rs.getDate("EndDate").toLocalDate(),
+                    rs.getInt("RoomID"),
+                    rs.getString("DayOfWeek"),
+                    rs.getTime("StartTime").toLocalTime(),
+                    rs.getTime("EndTime").toLocalTime(),
+                    rs.getString("Semester")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching schedule: " + e.getMessage());
+        }
+        return null;
+    }
+
     // ---------------------------------------------------------
     // DELETE: Remove a schedule (and its exceptions automatically)
     // ---------------------------------------------------------
