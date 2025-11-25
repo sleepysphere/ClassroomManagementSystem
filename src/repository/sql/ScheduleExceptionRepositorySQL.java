@@ -49,4 +49,24 @@ public class ScheduleExceptionRepositorySQL {
             return false;
         }
     }
+
+    // ---------------------------------------------------------
+    // DELETE: Remove an exception (Restores the original schedule)
+    // ---------------------------------------------------------
+    public static boolean deleteException(int exceptionId) {
+        String sql = "DELETE FROM ScheduleExceptions WHERE ExceptionID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, exceptionId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error removing exception: " + e.getMessage());
+            return false;
+        }
+    }
 }

@@ -9,9 +9,10 @@ public class Course {
     private boolean requiresLab;
     private int sessionCount;
     private int enrollmentLimit;
+    private boolean isActive;
 
     public Course(int courseId, String courseName, String courseCode, String description, 
-                  double credits, boolean requiresLab, int sessionCount, int enrollmentLimit) {
+                  double credits, boolean requiresLab, int sessionCount, int enrollmentLimit, boolean isActive) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseCode = courseCode;
@@ -20,6 +21,7 @@ public class Course {
         this.requiresLab = requiresLab;
         this.sessionCount = sessionCount;
         this.enrollmentLimit = enrollmentLimit;
+        this.isActive = isActive;
     }
 
     // Getters
@@ -31,6 +33,7 @@ public class Course {
     public boolean isRequiresLab() { return requiresLab; }
     public int getSessionCount() { return sessionCount; }
     public int getEnrollmentLimit() { return enrollmentLimit; }
+    public boolean isActive() { return isActive; }
 
     // Setters
     public void setCourseId(int courseId) { this.courseId = courseId; }
@@ -41,5 +44,6 @@ public class Course {
     public void setRequiresLab(boolean requiresLab) { this.requiresLab = requiresLab; }
     public void setSessionCount(int sessionCount) { this.sessionCount = sessionCount; }
     public void setEnrollmentLimit(int enrollmentLimit) { this.enrollmentLimit = enrollmentLimit; }
+    public void setActive(boolean isActive) { this.isActive = isActive; }
 }
 
