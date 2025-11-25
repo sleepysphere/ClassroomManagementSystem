@@ -37,4 +37,58 @@ public class ScheduleRepositorySQL {
             return false;
         }
     }
+    
+    // ---------------------------------------------------------
+    // DELETE: Remove a schedule (and its exceptions automatically)
+    // ---------------------------------------------------------
+    public static boolean deleteSchedule(int classId) {
+        String sql = "DELETE FROM schedules WHERE ClassID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, classId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Returns true if a row was actually deleted
+            
+        } catch (SQLException e) {
+            System.err.println("Error deleting schedule: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ---------------------------------------------------------
+    // UPDATE: Modify an existing schedule
+    // ---------------------------------------------------------
+    public static boolean updateSchedule(Schedule schedule) {
+        // Logic: Overwrite every field for the specific ClassID
+        String sql = "UPDATE schedules SET CourseID=?, InstructorID=?, SessionType=?, StartDate=?, EndDate=?, RoomID=?, DayOfWeek=?, StartTime=?, EndTime=?, Semester=? WHERE ClassID=?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            // 1. Set the new values
+            stmt.setInt(1, schedule.getCourseId());
+            stmt.setInt(2, schedule.getInstructorId());
+            stmt.setString(3, schedule.getSessionType());
+            stmt.setDate(4, java.sql.Date.valueOf(schedule.getStartDate()));
+            stmt.setDate(5, java.sql.Date.valueOf(schedule.getEndDate()));
+            stmt.setInt(6, schedule.getRoomId());
+            stmt.setString(7, schedule.getDayOfWeek());
+            stmt.setTime(8, java.sql.Time.valueOf(schedule.getStartTime()));
+            stmt.setTime(9, java.sql.Time.valueOf(schedule.getEndTime()));
+            stmt.setString(10, schedule.getSemester());
+            
+            // 2. Identify WHICH row to update (The ID)
+            stmt.setInt(11, schedule.getClassId());
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error updating schedule: " + e.getMessage());
+            return false;
+        }
+    }
 }
