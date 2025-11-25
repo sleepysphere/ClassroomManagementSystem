@@ -86,4 +86,21 @@ public class EnrollmentRepositorySQL {
             return false;
         }
     }
+    // DELETE: Drop a class (Student leaves)
+    public static boolean deleteEnrollment(int enrollmentId) {
+        String sql = "DELETE FROM enrollments WHERE EnrollmentID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, enrollmentId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error dropping class: " + e.getMessage());
+            return false;
+        }
+    }
 }
