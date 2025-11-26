@@ -38,6 +38,17 @@ public class miscDBCONN {
         return conn;
     }
 
+    //for executing SELECT queries
+    public static ResultSet executeQuery(String query) throws SQLException {
+        Statement stmt = conn.createStatement();
+        return stmt.executeQuery(query);
+    }
+    //for executing INSERT, UPDATE, DELETE queries
+    public static int executeUpdate(String query) throws SQLException {
+        Statement stmt = conn.createStatement();
+        return stmt.executeUpdate(query);
+    }
+
     public static void disconnect() {
         try {
             if (conn != null && !conn.isClosed()) {

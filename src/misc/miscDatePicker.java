@@ -5,38 +5,53 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
 
 public class miscDatePicker {
 
+    public static class PickedDateTime {
+        public LocalDate date;
+        public LocalTime startTime;
+        public LocalTime endTime;
+    }
+
     /**
-     * Call this to show a date picker dialog.
-     * Example:
-     * LocalDate date = miscDatePicker.pickDate(frame);
+     * Opens the date-time picker dialog and returns selected date + start/end times.
      */
-    public static LocalDate pickDate(Component parent) {
+    public static PickedDateTime pickDateTime(Component parent) {
         LocalDate initial = LocalDate.now();
-        DatePicker dp = new DatePicker(
+        DateTimePicker dp = new DateTimePicker(
                 SwingUtilities.getWindowAncestor(parent),
                 initial
         );
         dp.setVisible(true);
-        return dp.selectedDate;
+        return dp.getPickedDateTime();
     }
 
-    // ===========================
-    // Internal DatePicker class
-    // ===========================
-    private static class DatePicker extends JDialog {
+    // ==============================
+    // Internal DateTimePicker class
+    // ==============================
+    private static class DateTimePicker extends JDialog {
+
         private LocalDate selectedDate = null;
         private YearMonth showing;
         private JPanel daysPanel;
         private JLabel monthLabel;
         private final Locale locale = Locale.getDefault();
 
-        private DatePicker(Window owner, LocalDate initial) {
-            super(owner, "Select Date", ModalityType.APPLICATION_MODAL);
+        // Time selectors
+        private JComboBox<String> startHourBox;
+        private JComboBox<String> startMinuteBox;
+        private JComboBox<String> endHourBox;
+        private JComboBox<String> endMinuteBox;
+
+        private PickedDateTime result = null;
+
+        private DateTimePicker(Window owner, LocalDate initial) {
+            super(owner, "Select Date & Time", ModalityType.APPLICATION_MODAL);
             this.showing = YearMonth.from(initial);
             initUI(initial);
             pack();
@@ -44,11 +59,15 @@ public class miscDatePicker {
             setLocationRelativeTo(owner);
         }
 
-        private void initUI(LocalDate initial) {
-            JPanel content = new JPanel(new BorderLayout(10, 10));
-            content.setBorder(new EmptyBorder(10,10,10,10));
+        public PickedDateTime getPickedDateTime() {
+            return result;
+        }
 
-            // ========== HEADER ==========
+        private void initUI(LocalDate initial) {
+            JPanel mainPanel = new JPanel(new BorderLayout(10,10));
+            mainPanel.setBorder(new EmptyBorder(10,10,10,10));
+
+            // ------------- Calendar Header -------------
             JPanel header = new JPanel(new BorderLayout());
             JButton prev = new JButton("◀");
             JButton next = new JButton("▶");
@@ -61,33 +80,58 @@ public class miscDatePicker {
             prev.addActionListener(e -> { showing = showing.minusMonths(1); rebuildCalendar(); });
             next.addActionListener(e -> { showing = showing.plusMonths(1); rebuildCalendar(); });
 
-            content.add(header, BorderLayout.NORTH);
+            mainPanel.add(header, BorderLayout.NORTH);
 
-            // ========== DAY NAMES ==========
+            // ------------- Day names -------------
             JPanel names = new JPanel(new GridLayout(1,7));
             for (int i = 0; i < 7; i++) {
                 DayOfWeek d = DayOfWeek.of(((i + 1 - 1) % 7) + 1); // Monday-first
                 JLabel lbl = new JLabel(
-                        d.getDisplayName(TextStyle.SHORT_STANDALONE, locale), 
+                        d.getDisplayName(TextStyle.SHORT_STANDALONE, locale),
                         SwingConstants.CENTER
                 );
                 lbl.setForeground(Color.DARK_GRAY);
                 names.add(lbl);
             }
-            content.add(names, BorderLayout.CENTER);
+            mainPanel.add(names, BorderLayout.CENTER);
 
-            // ========== DAYS GRID ==========
+            // ------------- Calendar Grid -------------
             daysPanel = new JPanel(new GridLayout(6,7,4,4));
             rebuildCalendar();
-            content.add(daysPanel, BorderLayout.SOUTH);
+            mainPanel.add(daysPanel, BorderLayout.SOUTH);
 
-            // ========== BOTTOM BUTTONS ==========
+            // ------------- Time Picker Panel -------------
+            JPanel timePanel = new JPanel(new GridLayout(2, 4, 5,5));
+            timePanel.setBorder(BorderFactory.createTitledBorder("Select Time (24h)"));
+
+            String[] hours = new String[24];
+            String[] minutes = new String[60];
+            for (int i=0;i<24;i++) hours[i] = String.format("%02d", i);
+            for (int i=0;i<60;i++) minutes[i] = String.format("%02d", i);
+
+            startHourBox = new JComboBox<>(hours);
+            startMinuteBox = new JComboBox<>(minutes);
+            endHourBox = new JComboBox<>(hours);
+            endMinuteBox = new JComboBox<>(minutes);
+
+            timePanel.add(new JLabel("Start Hour:"));
+            timePanel.add(startHourBox);
+            timePanel.add(new JLabel("Start Minute:"));
+            timePanel.add(startMinuteBox);
+            timePanel.add(new JLabel("End Hour:"));
+            timePanel.add(endHourBox);
+            timePanel.add(new JLabel("End Minute:"));
+            timePanel.add(endMinuteBox);
+
+            add(mainPanel, BorderLayout.CENTER);
+            add(timePanel, BorderLayout.EAST);
+
+            // ------------- Bottom Buttons -------------
             JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
             JButton todayBtn = new JButton("Today");
             JButton clearBtn = new JButton("Clear");
             JButton cancelBtn = new JButton("Cancel");
-            JButton okBtn = new JButton("OK");
+            JButton okBtn = new JButton("Save");
 
             todayBtn.addActionListener(e -> {
                 LocalDate t = LocalDate.now();
@@ -106,36 +150,68 @@ public class miscDatePicker {
                 dispose();
             });
 
-            okBtn.addActionListener(e -> {
-                if (selectedDate == null)
-                    selectedDate = showing.atDay(1);  // default
-                dispose();
-            });
+            okBtn.addActionListener(e -> saveDateTime());
 
             bottom.add(todayBtn);
             bottom.add(clearBtn);
             bottom.add(cancelBtn);
             bottom.add(okBtn);
 
-            setLayout(new BorderLayout());
-            add(content, BorderLayout.CENTER);
             add(bottom, BorderLayout.SOUTH);
 
-            // Allow ESC to cancel
+            // ESC cancels
             getRootPane().registerKeyboardAction(ev -> {
                 selectedDate = null;
                 dispose();
-            }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+            }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
             selectedDate = initial;
+        }
+
+        private void saveDateTime() {
+            if (selectedDate == null) selectedDate = showing.atDay(1);
+
+            LocalTime startTime = LocalTime.of(
+                    startHourBox.getSelectedIndex(),
+                    startMinuteBox.getSelectedIndex()
+            );
+            LocalTime endTime = LocalTime.of(
+                    endHourBox.getSelectedIndex(),
+                    endMinuteBox.getSelectedIndex()
+            );
+
+            if (endTime.isBefore(startTime)) {
+                JOptionPane.showMessageDialog(this,
+                        "End time cannot be before start time!",
+                        "Invalid Time",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Confirm date: " + selectedDate.toString() +
+                            "\nStart: " + startTime.toString() +
+                            "\nEnd: " + endTime.toString(),
+                    "Confirm Selection",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (choice == JOptionPane.YES_OPTION) {
+                result = new PickedDateTime();
+                result.date = selectedDate;
+                result.startTime = startTime;
+                result.endTime = endTime;
+                dispose();
+            }
         }
 
         private void rebuildCalendar() {
             daysPanel.removeAll();
 
             monthLabel.setText(
-                    showing.getMonth().getDisplayName(TextStyle.FULL, locale)
-                    + " " + showing.getYear()
+                    showing.getMonth().getDisplayName(TextStyle.FULL, locale) +
+                            " " + showing.getYear()
             );
 
             LocalDate firstOfMonth = showing.atDay(1);
@@ -143,28 +219,22 @@ public class miscDatePicker {
             int shift = (firstDow.getValue() + 6) % 7; // Monday-first
             int daysInMonth = showing.lengthOfMonth();
 
-            // Add blanks
-            for (int i = 0; i < shift; i++) {
-                daysPanel.add(new JLabel(""));
-            }
+            for (int i=0;i<shift;i++) daysPanel.add(new JLabel(""));
 
-            // Days
-            for (int d = 1; d <= daysInMonth; d++) {
+            for (int d=1; d<=daysInMonth; d++) {
                 LocalDate day = showing.atDay(d);
                 JButton dayBtn = new JButton(String.valueOf(d));
                 dayBtn.setMargin(new Insets(2,2,2,2));
                 dayBtn.setOpaque(true);
                 dayBtn.setFocusPainted(false);
 
-                if (day.equals(LocalDate.now())) {
+                if (day.equals(LocalDate.now()))
                     dayBtn.setFont(dayBtn.getFont().deriveFont(Font.BOLD));
-                }
 
-                if (day.equals(selectedDate)) {
+                if (day.equals(selectedDate))
                     dayBtn.setBackground(new Color(173, 216, 230));
-                } else {
+                else
                     dayBtn.setBackground(UIManager.getColor("Button.background"));
-                }
 
                 dayBtn.addActionListener(e -> {
                     selectedDate = day;
@@ -174,11 +244,8 @@ public class miscDatePicker {
                 daysPanel.add(dayBtn);
             }
 
-            // Fill grid to 42 cells
             int total = shift + daysInMonth;
-            for (int i = total; i < 42; i++) {
-                daysPanel.add(new JLabel(""));
-            }
+            for (int i=total;i<42;i++) daysPanel.add(new JLabel(""));
 
             daysPanel.revalidate();
             daysPanel.repaint();
