@@ -245,6 +245,8 @@ public class SchedulePanel extends JPanel {
                 dialog.dispose();
                 
                 JOptionPane.showMessageDialog(this, "Schedule added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                // call to function to add to database
+
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(dialog, "Please enter valid numbers for IDs!", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {

@@ -14,6 +14,7 @@ public class Main {
     public static void main(String[] args) {
 
         // Attempt to connect to the DB first
+        
         try {
             DBConnection.getConnection();
         } catch (SQLException e) {
@@ -21,6 +22,7 @@ public class Main {
             e.printStackTrace();
             System.exit(0);
         }
+        
 
         System.out.println("\n--- Testing UPDATE & DELETE ---");
 
@@ -54,6 +56,7 @@ public class Main {
         }
 
         // If connected → load GUI
+        
         SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame();
             mainFrame.setVisible(true);

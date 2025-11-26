@@ -1,10 +1,10 @@
 package database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DBConnection {
+
+    private static Connection conn;
 
     private static final String URL = "jdbc:mysql://localhost:3306/class_management";
     private static final String USERNAME = "root";
@@ -12,23 +12,41 @@ public class DBConnection {
 
     private DBConnection() {} // Prevent instantiation
 
-
-    public static Connection getConnection() throws SQLException {
+    public static boolean connect(){
         try {
             // 🔹 Load MySQL JDBC driver
             Class.forName("com.mysql.cj.jdbc.Driver");
             
             // 🔹 Create and return new connection
-            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            conn.close();
+            Statement stmt = conn.createStatement();
+            stmt.close();
+            return true;
             
         } catch (ClassNotFoundException e) {
-            throw new SQLException("MySQL JDBC Driver not found! Add the JAR to project.", e);
+            System.err.println("MySQL JDBC Driver not found! Add the JAR to project.");
+            return false;
+        } catch (SQLException e) {
+            System.err.println("Connection Failed! Check output console");
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public static void disconnect() {
-        // This method is no longer needed since connections are created per request
-        // Users should close connections in try-with-resources or finally blocks
-        System.out.println("Note: Close connections using try-with-resources or conn.close()");
+    public static Connection getConnection(){
+        return conn;
     }
+
+    public static void disconnect() {
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+                System.out.println("Database Disconnected Successfully!");
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to disconnect: " + e.getMessage());
+        }
+    }
+
 }
