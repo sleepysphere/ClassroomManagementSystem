@@ -54,10 +54,10 @@ public class Main {
         }
 
         // If connected → load GUI
-        //SwingUtilities.invokeLater(() -> {
-        //    MainFrame mainFrame = new MainFrame();
-        //    mainFrame.setVisible(true);
-        //});
+        SwingUtilities.invokeLater(() -> {
+            MainFrame mainFrame = new MainFrame();
+            mainFrame.setVisible(true);
+        });
 
         // Ensure DB disconnect when app closes
         Runtime.getRuntime().addShutdownHook(new Thread(DBConnection::disconnect));
