@@ -82,7 +82,6 @@ public class RoomsPanel extends JPanel {
         roomTable.getTableHeader().setForeground(Color.WHITE);
         roomTable.setSelectionBackground(new Color(46, 204, 113, 100));
         
-        // Thêm hiệu ứng hover
         roomTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             private int hoveredRow = -1;
             @Override

@@ -84,7 +84,6 @@ public class SchedulePanel extends JPanel {
         scheduleTable.getTableHeader().setForeground(Color.WHITE);
         scheduleTable.setSelectionBackground(new Color(241, 196, 15, 100));
         
-        // Thêm hiệu ứng hover
         scheduleTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             private int hoveredRow = -1;
             @Override
