@@ -2,6 +2,7 @@ package misc;
 
 import javax.swing.SwingUtilities;
 
+/* 
 public class miscMAIN {
 
     static boolean connStatus = false;
@@ -34,3 +35,4 @@ public class miscMAIN {
         }));
     }
 }
+*/

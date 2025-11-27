@@ -4,7 +4,10 @@ import database.DBConnection;
 import model.Course;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CourseRepositorySQL {
     private CourseRepositorySQL() {} // Prevent instantiation
@@ -40,8 +43,12 @@ public class CourseRepositorySQL {
     // READ: Get a single course by ID
     // ---------------------------------------------------------
     public static Course getCourseById(int courseId) {
-        String sql = "SELECT * FROM courses WHERE CourseID = ?";
-        
+        String sql = """
+        SELECT CourseID, CourseName, CourseCode, Description,
+            Credits, RequiresLab, SessionCount, EnrollmentLimit, IsActive
+        FROM courses
+        WHERE CourseID = ?
+        """;        
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
@@ -137,4 +144,38 @@ public class CourseRepositorySQL {
             return false;
         }
     }
+
+    public static List<Course> getAllCourses(){
+    List<Course> courses = new ArrayList<>();
+    String sql = """
+        SELECT CourseID, CourseName, CourseCode, Description,
+            Credits, RequiresLab, SessionCount, EnrollmentLimit, IsActive
+        FROM courses
+    """;
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Course course = new Course(
+                rs.getInt("CourseID"),
+                rs.getString("CourseName"),
+                rs.getString("CourseCode"),
+                rs.getString("Description"),
+                rs.getDouble("Credits"),
+                rs.getBoolean("RequiresLab"),
+                rs.getInt("SessionCount"),
+                rs.getInt("EnrollmentLimit"),
+                rs.getBoolean("IsActive")
+            );
+            courses.add(course);
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Error fetching courses: " + e.getMessage());
+    }
+    return courses;
+}
+
 }

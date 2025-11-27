@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import javax.swing.*;
 import java.util.List;
 
+/* 
 public class miscGUI extends JFrame {
 
     private JTextArea textArea;
@@ -79,3 +80,4 @@ public class miscGUI extends JFrame {
         });
     }
 }
+*/

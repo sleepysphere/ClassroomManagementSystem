@@ -1,5 +1,6 @@
 package misc;
 
+/* 
 import java.sql.ResultSet;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -76,7 +77,7 @@ public class miscDPControl {
     }
 
     // Optional legacy: retrieve all dates (unfiltered)
-    /*
+    
     protected static List<LocalDate> RetrieveAllDates() {
         List<LocalDate> dates = new ArrayList<>();
         String query = "SELECT date_check FROM misc ORDER BY id_check ASC";
@@ -91,5 +92,6 @@ public class miscDPControl {
         }
         return dates;
     }
-    */
+    
 }
+*/

@@ -2,6 +2,7 @@ package misc;
 
 import java.sql.*;
 
+/* 
 public class miscDBCONN {
 
     private static Connection conn = null;
@@ -61,3 +62,4 @@ public class miscDBCONN {
     }
 
 }
+*/

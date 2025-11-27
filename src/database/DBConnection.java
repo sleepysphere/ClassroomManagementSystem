@@ -12,18 +12,16 @@ public class DBConnection {
 
     private DBConnection() {} // Prevent instantiation
 
-    public static boolean connect(){
+    public static boolean connect() {
         try {
-             // Load JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Only connect if not already connected
             if (conn == null || conn.isClosed()) {
                 conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
                 System.out.println("DB Connected Successfully");
             }
             return true;
-            
+
         } catch (ClassNotFoundException e) {
             System.err.println("MySQL JDBC Driver not found! Add the JAR to project.");
             return false;
@@ -34,19 +32,25 @@ public class DBConnection {
         }
     }
 
-    public static Connection getConnection(){
+    public static Connection getConnection() throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            connect(); // reconnect if closed
+        }
         return conn;
     }
 
-    //for executing SELECT queries
+    // for executing SELECT queries
     public static ResultSet executeQuery(String query) throws SQLException {
-        Statement stmt = conn.createStatement();
-        return stmt.executeQuery(query);
+        Connection c = getConnection();
+        Statement stmt = c.createStatement();
+        return stmt.executeQuery(query); // Caller must close ResultSet and Statement
     }
-    //for executing INSERT, UPDATE, DELETE queries
+
+    // for executing INSERT, UPDATE, DELETE queries
     public static int executeUpdate(String query) throws SQLException {
-        Statement stmt = conn.createStatement();
-        return stmt.executeUpdate(query);
+        try (Statement stmt = getConnection().createStatement()) {
+            return stmt.executeUpdate(query);
+        }
     }
 
     public static void disconnect() {
@@ -59,5 +63,4 @@ public class DBConnection {
             System.err.println("Failed to disconnect: " + e.getMessage());
         }
     }
-
 }

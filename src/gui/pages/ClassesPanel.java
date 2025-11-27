@@ -491,9 +491,16 @@ public class ClassesPanel extends JPanel {
     private void refreshTable() {
         tableModel.setRowCount(0);
         
-        // Note: CourseRepositorySQL doesn't have getAllCourses method
-        // For now, table will be empty until you add courses
-        // You may need to add a getAllCourses() method to CourseRepositorySQL
+        for (Course course : CourseRepositorySQL.getAllCourses()) {
+            Object[] rowData = {
+                course.getCourseId(),
+                course.getCourseCode(),
+                course.getCourseName(),
+                course.getCredits(),
+                course.isRequiresLab() ? "Yes" : "No"
+            };
+            tableModel.addRow(rowData);
+        }
     }
     
     /**
