@@ -5,6 +5,9 @@ import model.Room;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoomRepositorySQL {
     
@@ -103,5 +106,28 @@ public class RoomRepositorySQL {
             System.err.println("Error deleting room: " + e.getMessage());
             return false;
         }
+    }
+
+    public static List<Room> getAllRooms() {
+        List<Room> rooms = new ArrayList<>();
+        String sql = "SELECT RoomID, RoomNumber, RoomType, Capacity FROM rooms";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Room room = new Room(
+                    rs.getInt("RoomID"),
+                    rs.getString("RoomNumber"),
+                    rs.getString("RoomType"),
+                    rs.getInt("Capacity")
+                );
+                rooms.add(room);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching rooms: " + e.getMessage());
+        }
+        return rooms;
     }
 }

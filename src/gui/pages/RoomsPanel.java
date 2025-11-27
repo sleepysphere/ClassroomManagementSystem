@@ -438,6 +438,15 @@ public class RoomsPanel extends JPanel {
     private void refreshTable() {
         tableModel.setRowCount(0);
         
+        for (Room room : RoomRepositorySQL.getAllRooms()) {
+            Object[] rowData = {
+                room.getRoomID(),
+                room.getRoomNumber(),
+                room.getRoomType(),
+                room.getCapacity()
+            };
+            tableModel.addRow(rowData);
+        }
         // Note: RoomRepositorySQL doesn't have getAllRooms method
         // For now, table will be empty until you add rooms
         // You may need to add a getAllRooms() method to RoomRepositorySQL
