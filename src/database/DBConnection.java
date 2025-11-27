@@ -14,14 +14,14 @@ public class DBConnection {
 
     public static boolean connect(){
         try {
-            // 🔹 Load MySQL JDBC driver
+             // Load JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-            
-            // 🔹 Create and return new connection
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            conn.close();
-            Statement stmt = conn.createStatement();
-            stmt.close();
+
+            // Only connect if not already connected
+            if (conn == null || conn.isClosed()) {
+                conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+                System.out.println("DB Connected Successfully");
+            }
             return true;
             
         } catch (ClassNotFoundException e) {
@@ -38,11 +38,22 @@ public class DBConnection {
         return conn;
     }
 
+    //for executing SELECT queries
+    public static ResultSet executeQuery(String query) throws SQLException {
+        Statement stmt = conn.createStatement();
+        return stmt.executeQuery(query);
+    }
+    //for executing INSERT, UPDATE, DELETE queries
+    public static int executeUpdate(String query) throws SQLException {
+        Statement stmt = conn.createStatement();
+        return stmt.executeUpdate(query);
+    }
+
     public static void disconnect() {
         try {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
-                System.out.println("Database Disconnected Successfully!");
+                System.out.println("DB Disconnected Successfully!");
             }
         } catch (SQLException e) {
             System.err.println("Failed to disconnect: " + e.getMessage());
