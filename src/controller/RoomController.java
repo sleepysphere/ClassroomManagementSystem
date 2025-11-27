@@ -5,14 +5,20 @@ import gui.*;
 import database.*;
 import repository.*;
 
-/* 
+
 public class RoomController {
+
+    //container for room entries
+    public static class RoomEntry{
+        public String roomID;
+        public String roomNumber;
+        public int capacity;
+        public String type;
+    }
     // add 3 functions, add, edit and delete, connect to database
-    public void addRoom(String roomNumber, int capacity, String type) {
-        try (var conn = DBConnection.getConnection()) {
-            RoomRepository roomRepo = new RoomRepository(conn);
-            roomRepo.addRoom(roomNumber, capacity, type);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void addRoom(String roomID,String roomNumber, int capacity, String type) {
+        String insertQuery = String.format("INSERT INTO rooms (RoomID, RoomNumber, Capacity, Type) VALUES ('%s', '%s', %d, '%s')",
+                roomID.toString(), roomNumber.toString(), capacity, type.toString());
+        
+    }
 }
-*/

@@ -4,29 +4,24 @@ import gui.MainFrame;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import model.SchoolClass;
-import repository.ClassRepository;
+import model.Course;
+import repository.sql.CourseRepositorySQL;
 
 /**
  * Classes Management Panel
- * Provides interface to add, edit, delete and view list of school classes
+ * Provides interface to add, edit, delete and view list of courses
  */
 public class ClassesPanel extends JPanel {
 
     // UI Components
-    private JTable classTable;              // Table displaying list of classes
+    private JTable classTable;              // Table displaying list of courses
     private DefaultTableModel tableModel;   // Data model for the table
     private JButton addButton, editButton, deleteButton, refreshButton;  // Action buttons
-    
-    // Repository for database interaction
-    private ClassRepository classRepository;
 
     /**
-     * Constructor with dependency injection
-     * @param classRepository Repository for managing class data
+     * Constructor - initializes the panel
      */
-    public ClassesPanel(ClassRepository classRepository) {
-        this.classRepository = classRepository;
+    public ClassesPanel() {
         
         setLayout(new BorderLayout(15, 15));
         setBackground(MainFrame.BACKGROUND_COLOR);
@@ -59,11 +54,11 @@ public class ClassesPanel extends JPanel {
             BorderFactory.createEmptyBorder(20, 25, 20, 25)
         ));
         
-        JLabel titleLabel = new JLabel("Class Management");
+        JLabel titleLabel = new JLabel("Course Management");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setForeground(new Color(52, 73, 94));
         
-        JLabel descLabel = new JLabel("Add, edit, and manage school classes");
+        JLabel descLabel = new JLabel("Add, edit, and manage courses");
         descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         descLabel.setForeground(new Color(127, 140, 141));
         
@@ -91,7 +86,7 @@ public class ClassesPanel extends JPanel {
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
         
-        String[] columns = {"ID", "Class Name", "Requires Lab", "Student Count"};
+        String[] columns = {"ID", "Course Code", "Course Name", "Credits", "Requires Lab"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -156,9 +151,9 @@ public class ClassesPanel extends JPanel {
         panel.setBackground(MainFrame.BACKGROUND_COLOR);
         
         // Create styled buttons
-        addButton = createStyledButton("Add Class", MainFrame.SUCCESS_COLOR);
-        editButton = createStyledButton("Edit Class", MainFrame.WARNING_COLOR);
-        deleteButton = createStyledButton("Delete Class", MainFrame.DANGER_COLOR);
+        addButton = createStyledButton("Add Course", MainFrame.SUCCESS_COLOR);
+        editButton = createStyledButton("Edit Course", MainFrame.WARNING_COLOR);
+        deleteButton = createStyledButton("Delete Course", MainFrame.DANGER_COLOR);
         refreshButton = createStyledButton("Refresh", MainFrame.SECONDARY_COLOR);
         
         panel.add(addButton);
@@ -216,86 +211,107 @@ public class ClassesPanel extends JPanel {
      * Connects buttons to their corresponding handler methods
      */
     private void setupButtonHandlers() {
-        addButton.addActionListener(e -> showAddClassDialog());
-        editButton.addActionListener(e -> showEditClassDialog());
-        deleteButton.addActionListener(e -> deleteSelectedClass());
+        addButton.addActionListener(e -> showAddCourseDialog());
+        editButton.addActionListener(e -> showEditCourseDialog());
+        deleteButton.addActionListener(e -> deleteSelectedCourse());
         refreshButton.addActionListener(e -> refreshTable());
     }
     
     /**
-     * Displays dialog for adding new class
-     * Allows input: class name, lab requirement, student count
+     * Displays dialog for adding new course
+     * Allows input: course code, name, credits, lab requirement
      * Performs validation and saves to database via repository
      */
-    private void showAddClassDialog() {
-        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Add New Class", true);
+    private void showAddCourseDialog() {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Add New Course", true);
         dialog.setLayout(new BorderLayout(10, 10));
         dialog.setSize(400, 300);
         dialog.setLocationRelativeTo(this);
         
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 15));
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 15));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         formPanel.setBackground(MainFrame.PANEL_COLOR);
         
         // Form fields
-        JLabel nameLabel = new JLabel("Class Name:");
+        JLabel codeLabel = new JLabel("Course Code:");
+        codeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTextField codeField = new JTextField();
+        codeField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        
+        JLabel nameLabel = new JLabel("Course Name:");
         nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         JTextField nameField = new JTextField();
         nameField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        
+        JLabel creditsLabel = new JLabel("Credits:");
+        creditsLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTextField creditsField = new JTextField();
+        creditsField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         JLabel labLabel = new JLabel("Requires Lab:");
         labLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         JCheckBox labCheckBox = new JCheckBox();
         
-        JLabel studentLabel = new JLabel("Student Count:");
-        studentLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        JTextField studentField = new JTextField();
-        studentField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JLabel limitLabel = new JLabel("Enrollment Limit:");
+        limitLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTextField limitField = new JTextField();
+        limitField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
+        formPanel.add(codeLabel);
+        formPanel.add(codeField);
         formPanel.add(nameLabel);
         formPanel.add(nameField);
+        formPanel.add(creditsLabel);
+        formPanel.add(creditsField);
         formPanel.add(labLabel);
         formPanel.add(labCheckBox);
-        formPanel.add(studentLabel);
-        formPanel.add(studentField);
+        formPanel.add(limitLabel);
+        formPanel.add(limitField);
         
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setBackground(MainFrame.PANEL_COLOR);
         
-        JButton saveBtn = createStyledButton("💾 Save", MainFrame.SUCCESS_COLOR);
-        JButton cancelBtn = createStyledButton("❌ Cancel", MainFrame.DANGER_COLOR);
+        JButton saveBtn = createStyledButton("Save", MainFrame.SUCCESS_COLOR);
+        JButton cancelBtn = createStyledButton("Cancel", MainFrame.DANGER_COLOR);
         
         saveBtn.addActionListener(e -> {
+            String code = codeField.getText().trim();
             String name = nameField.getText().trim();
-            String studentCountText = studentField.getText().trim();
+            String creditsText = creditsField.getText().trim();
+            String limitText = limitField.getText().trim();
             
             // Validation
-            if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "Please enter class name!", "Error", JOptionPane.ERROR_MESSAGE);
+            if (code.isEmpty() || name.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Please enter course code and name!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            int studentCount = 0;
+            double credits = 0;
+            int limit = 0;
             try {
-                studentCount = Integer.parseInt(studentCountText);
-                if (studentCount <= 0) {
-                    JOptionPane.showMessageDialog(dialog, "Student count must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+                credits = Double.parseDouble(creditsText);
+                limit = Integer.parseInt(limitText);
+                if (credits <= 0 || limit <= 0) {
+                    JOptionPane.showMessageDialog(dialog, "Credits and limit must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(dialog, "Please enter a valid number for student count!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, "Please enter valid numbers!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Create new class (ID will be auto-generated by database)
-            SchoolClass newClass = new SchoolClass(0, name, labCheckBox.isSelected(), studentCount);
-            classRepository.save(newClass);
+            // Create new course (ID will be auto-generated by database)
+            Course newCourse = new Course(0, name, code, "", credits, labCheckBox.isSelected(), 0, limit, true);
+            boolean success = CourseRepositorySQL.addCourse(newCourse);
             
-            refreshTable();
-            dialog.dispose();
-            
-            JOptionPane.showMessageDialog(this, "Class added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (success) {
+                refreshTable();
+                dialog.dispose();
+                JOptionPane.showMessageDialog(this, "Course added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Failed to add course!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
         
         cancelBtn.addActionListener(e -> dialog.dispose());
@@ -309,55 +325,69 @@ public class ClassesPanel extends JPanel {
     }
     
     /**
-     * Displays dialog for editing selected class information
+     * Displays dialog for editing selected course information
      * Loads current data from database and allows editing
      * Performs validation and updates to database
      */
-    private void showEditClassDialog() {
+    private void showEditCourseDialog() {
         int selectedRow = classTable.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a class to edit!", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a course to edit!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        int classId = (int) tableModel.getValueAt(selectedRow, 0);
-        SchoolClass selectedClass = classRepository.findById(classId);
+        int courseId = (int) tableModel.getValueAt(selectedRow, 0);
+        Course selectedCourse = CourseRepositorySQL.getCourseById(courseId);
         
-        if (selectedClass == null) {
-            JOptionPane.showMessageDialog(this, "Class not found!", "Error", JOptionPane.ERROR_MESSAGE);
+        if (selectedCourse == null) {
+            JOptionPane.showMessageDialog(this, "Course not found!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Class", true);
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Course", true);
         dialog.setLayout(new BorderLayout(10, 10));
-        dialog.setSize(400, 300);
+        dialog.setSize(400, 350);
         dialog.setLocationRelativeTo(this);
         
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 15));
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 15));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         formPanel.setBackground(MainFrame.PANEL_COLOR);
         
         // Form fields with current data
-        JLabel nameLabel = new JLabel("Class Name:");
+        JLabel codeLabel = new JLabel("Course Code:");
+        codeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTextField codeField = new JTextField(selectedCourse.getCourseCode());
+        codeField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        
+        JLabel nameLabel = new JLabel("Course Name:");
         nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        JTextField nameField = new JTextField(selectedClass.getName());
+        JTextField nameField = new JTextField(selectedCourse.getCourseName());
         nameField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        
+        JLabel creditsLabel = new JLabel("Credits:");
+        creditsLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTextField creditsField = new JTextField(String.valueOf(selectedCourse.getCredits()));
+        creditsField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         JLabel labLabel = new JLabel("Requires Lab:");
         labLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        JCheckBox labCheckBox = new JCheckBox("", selectedClass.requiresLab());
+        JCheckBox labCheckBox = new JCheckBox("", selectedCourse.isRequiresLab());
         
-        JLabel studentLabel = new JLabel("Student Count:");
-        studentLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        JTextField studentField = new JTextField(String.valueOf(selectedClass.getStudentCount()));
-        studentField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JLabel limitLabel = new JLabel("Enrollment Limit:");
+        limitLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        JTextField limitField = new JTextField(String.valueOf(selectedCourse.getEnrollmentLimit()));
+        limitField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
+        formPanel.add(codeLabel);
+        formPanel.add(codeField);
         formPanel.add(nameLabel);
         formPanel.add(nameField);
+        formPanel.add(creditsLabel);
+        formPanel.add(creditsField);
         formPanel.add(labLabel);
         formPanel.add(labCheckBox);
-        formPanel.add(studentLabel);
-        formPanel.add(studentField);
+        formPanel.add(limitLabel);
+        formPanel.add(limitField);
         
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -367,35 +397,46 @@ public class ClassesPanel extends JPanel {
         JButton cancelBtn = createStyledButton("❌ Cancel", MainFrame.DANGER_COLOR);
         
         saveBtn.addActionListener(e -> {
+            String code = codeField.getText().trim();
             String name = nameField.getText().trim();
-            String studentCountText = studentField.getText().trim();
+            String creditsText = creditsField.getText().trim();
+            String limitText = limitField.getText().trim();
             
-            if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(dialog, "Please enter class name!", "Error", JOptionPane.ERROR_MESSAGE);
+            if (code.isEmpty() || name.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Please enter course code and name!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            int studentCount = 0;
+            double credits = 0;
+            int limit = 0;
             try {
-                studentCount = Integer.parseInt(studentCountText);
-                if (studentCount <= 0) {
-                    JOptionPane.showMessageDialog(dialog, "Student count must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
+                credits = Double.parseDouble(creditsText);
+                limit = Integer.parseInt(limitText);
+                if (credits <= 0 || limit <= 0) {
+                    JOptionPane.showMessageDialog(dialog, "Credits and limit must be greater than 0!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(dialog, "Please enter a valid number for student count!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, "Please enter valid numbers!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
             // Update information
-            selectedClass.setName(name);
-            selectedClass.setRequiresLab(labCheckBox.isSelected());
-            selectedClass.setStudentCount(studentCount);
+            selectedCourse.setCourseCode(code);
+            selectedCourse.setCourseName(name);
+            selectedCourse.setCredits(credits);
+            selectedCourse.setRequiresLab(labCheckBox.isSelected());
+            selectedCourse.setEnrollmentLimit(limit);
             
-            refreshTable();
-            dialog.dispose();
+            boolean success = CourseRepositorySQL.updateCourse(selectedCourse);
             
-            JOptionPane.showMessageDialog(this, "Class updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            if (success) {
+                refreshTable();
+                dialog.dispose();
+                JOptionPane.showMessageDialog(this, "Course updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Failed to update course!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
         
         cancelBtn.addActionListener(e -> dialog.dispose());
@@ -409,51 +450,50 @@ public class ClassesPanel extends JPanel {
     }
     
     /**
-     * Deletes selected class from the table
+     * Deletes selected course from the table
      * Shows confirmation dialog before deletion
-     * TODO: Need to call classRepository.delete(id) to remove from database
      */
-    private void deleteSelectedClass() {
+    private void deleteSelectedCourse() {
         int selectedRow = classTable.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a class to delete!", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a course to delete!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        String className = (String) tableModel.getValueAt(selectedRow, 1);
+        int courseId = (int) tableModel.getValueAt(selectedRow, 0);
+        String courseName = (String) tableModel.getValueAt(selectedRow, 2);
         
         int confirm = JOptionPane.showConfirmDialog(
             this,
-            "Are you sure you want to delete class: " + className + "?",
+            "Are you sure you want to delete course: " + courseName + "?\nThis will remove ALL enrollments!",
             "Confirm Delete",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE
         );
         
         if (confirm == JOptionPane.YES_OPTION) {
-            // Remove from repository (need to implement delete method in repository)
-            tableModel.removeRow(selectedRow);
-            JOptionPane.showMessageDialog(this, "Class deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            boolean success = CourseRepositorySQL.deleteCourse(courseId);
+            
+            if (success) {
+                refreshTable();
+                JOptionPane.showMessageDialog(this, "Course deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to delete course!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
     
     /**
      * Refreshes the data table
-     * Reloads entire list of classes from database via repository
+     * Reloads entire list of courses from database
      * and displays them in the table
      */
     private void refreshTable() {
         tableModel.setRowCount(0);
         
-        for (SchoolClass schoolClass : classRepository.findAll()) {
-            Object[] row = {
-                schoolClass.getId(),
-                schoolClass.getName(),
-                schoolClass.requiresLab() ? "Yes" : "No",
-                schoolClass.getStudentCount()
-            };
-            tableModel.addRow(row);
-        }
+        // Note: CourseRepositorySQL doesn't have getAllCourses method
+        // For now, table will be empty until you add courses
+        // You may need to add a getAllCourses() method to CourseRepositorySQL
     }
     
     /**

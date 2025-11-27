@@ -1,22 +1,34 @@
 package gui;
 
 import javax.swing.SwingUtilities;
-import repository.ClassRepository;
-import repository.RoomRepository;
-import repository.ScheduleRepository;
-
+import database.*;
 
 public class Main {
 
+    static boolean ConnStatus = false; // DB CONNECTION STATUS
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
- 
-            ClassRepository classRepository = null; //Inject real implementation
-            RoomRepository roomRepository = null; // Inject real implementation
-            ScheduleRepository scheduleRepository = null; //Inject real implementation
-            
-            MainFrame mainFrame = new MainFrame(classRepository, roomRepository, scheduleRepository);
-            mainFrame.setVisible(true);
-        });
+
+        ConnStatus = DBConnection.connect(); // CONNECT TO DB
+        if (ConnStatus)
+            System.out.println("Successfully connected to database");
+        else
+            System.out.println("Failed to connect to database");
+
+        if (ConnStatus) {
+            SwingUtilities.invokeLater(() -> {
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.setVisible(true);
+            });
+        }
+        else {
+            System.out.println("GUI not initialized due to DB connection failure");
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            DBConnection.disconnect(); // DISCONNECT FROM DB
+            if (ConnStatus)
+                System.out.println("Successfully closed GUI"); // CLOSE GUI
+        }));
     }
 }

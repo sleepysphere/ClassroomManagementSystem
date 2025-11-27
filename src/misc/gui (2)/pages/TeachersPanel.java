@@ -147,22 +147,11 @@ public class TeachersPanel extends JPanel {
     /**
      * Refreshes the teacher table with current data
      */
-   private void refreshTable() {
-    tableModel.setRowCount(0);
-
-    for (Instructor instructor : InstructorRepositorySQL.getAllInstructors()) {
-        tableModel.addRow(new Object[] {
-            instructor.getInstructorId(),
-            instructor.getFirstName(),
-            instructor.getLastName(),
-            instructor.getEmail(),
-            instructor.getPhone(),
-            instructor.getDepartment(),
-            instructor.getHireDate()
-        });
+    private void refreshTable() {
+        tableModel.setRowCount(0);
+        // TODO: Add getAllInstructors() method to InstructorRepositorySQL
+        // For now, table will be empty until that method is implemented
     }
-}
-
     
     /**
      * Shows dialog to add new teacher

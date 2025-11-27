@@ -4,7 +4,10 @@ import database.DBConnection;
 import model.Instructor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InstructorRepositorySQL {
     private InstructorRepositorySQL() {} // Prevent instantiation
@@ -81,4 +84,32 @@ public class InstructorRepositorySQL {
             return false;
         }
     }
+    public static List<Instructor> getAllInstructors() {
+    List<Instructor> instructors = new ArrayList<>();
+    String sql = "SELECT InstructorID, FirstName, LastName, Email, Phone, Department, HireDate FROM instructors";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Instructor instructor = new Instructor(
+                rs.getInt("InstructorID"),
+                rs.getString("FirstName"),
+                rs.getString("LastName"),
+                rs.getString("Email"),
+                rs.getString("Phone"),
+                rs.getString("Department"),
+                rs.getDate("HireDate").toLocalDate()
+            );
+            instructors.add(instructor);
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Error fetching instructors: " + e.getMessage());
+    }
+
+    return instructors;
+}
+
 }
