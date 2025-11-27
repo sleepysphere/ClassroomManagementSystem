@@ -8,7 +8,7 @@ public class miscMAIN {
 
     public static void main(String[] args) {
 
-        connStatus = miscDBCONN.connect();
+        connStatus = miscDBCONN.connect(); // CONNECT TO DB
 
         if (connStatus)
             System.out.println("Successfully connected to database");
@@ -28,9 +28,9 @@ public class miscMAIN {
         });
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            miscDBCONN.disconnect();
+            miscDBCONN.disconnect(); // DISCONNECT FROM DB
             if (connStatus)
-                System.out.println("Successfully killed GUI");
+                System.out.println("Successfully closed GUI"); // CLOSE GUI
         }));
     }
 }

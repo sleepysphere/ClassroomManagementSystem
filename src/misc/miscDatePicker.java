@@ -187,7 +187,7 @@ public class miscDatePicker {
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
+            // CONFIRM DIALOG
             int choice = JOptionPane.showConfirmDialog(
                     this,
                     "Confirm date: " + selectedDate.toString() +
@@ -195,7 +195,7 @@ public class miscDatePicker {
                             "\nEnd: " + endTime.toString(),
                     "Confirm Selection",
                     JOptionPane.YES_NO_OPTION
-            );
+            ); 
 
             if (choice == JOptionPane.YES_OPTION) {
                 result = new PickedDateTime();
@@ -205,7 +205,7 @@ public class miscDatePicker {
                 dispose();
             }
         }
-
+        // CALENDAR FIELD
         private void rebuildCalendar() {
             daysPanel.removeAll();
 

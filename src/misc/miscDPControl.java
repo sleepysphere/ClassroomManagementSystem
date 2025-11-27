@@ -76,6 +76,7 @@ public class miscDPControl {
     }
 
     // Optional legacy: retrieve all dates (unfiltered)
+    /*
     protected static List<LocalDate> RetrieveAllDates() {
         List<LocalDate> dates = new ArrayList<>();
         String query = "SELECT date_check FROM misc ORDER BY id_check ASC";
@@ -90,4 +91,5 @@ public class miscDPControl {
         }
         return dates;
     }
+    */
 }
