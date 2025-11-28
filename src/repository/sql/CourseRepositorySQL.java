@@ -15,7 +15,7 @@ public class CourseRepositorySQL {
     public static boolean addCourse(Course course) {
         // SQL query to insert a new course
         // We exclude CourseID assuming it is AUTO_INCREMENT in the database
-        String sql = "INSERT INTO courses (CourseCode, CourseName, Credits, EnrollmentLimit, RequiresLab, SessionCount) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO courses (CourseCode, CourseName, Credits, EnrollmentLimit, RequiresLab, SessionCount, IsActive ) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -27,6 +27,7 @@ public class CourseRepositorySQL {
             stmt.setInt(4, course.getEnrollmentLimit());
             stmt.setBoolean(5, course.isRequiresLab());
             stmt.setInt(6, course.getSessionCount());
+            stmt.setBoolean(7, course.isActive());
             
             // Execute the insert
             int rowsAffected = stmt.executeUpdate();

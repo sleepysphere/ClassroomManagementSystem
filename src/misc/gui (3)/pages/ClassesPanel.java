@@ -256,12 +256,6 @@ public class ClassesPanel extends JPanel {
         limitLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         JTextField limitField = new JTextField();
         limitField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-
-        
-        // JLabel sessCountLabel = new JLabel("Session Count:");
-        // sessCountLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        // JTextField sessCountField = new JTextField();
-        // sessCountField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         
         formPanel.add(codeLabel);
         formPanel.add(codeField);
@@ -273,8 +267,6 @@ public class ClassesPanel extends JPanel {
         formPanel.add(labCheckBox);
         formPanel.add(limitLabel);
         formPanel.add(limitField);
-        // formPanel.add(sessCountLabel);
-        // formPanel.add(sessCountField);
         
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

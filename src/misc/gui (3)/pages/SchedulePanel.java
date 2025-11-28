@@ -144,12 +144,12 @@ public class SchedulePanel extends JPanel {
         
         addButton = createStyledButton("Add Schedule", MainFrame.SUCCESS_COLOR);
         deleteButton = createStyledButton("Delete Schedule", MainFrame.DANGER_COLOR);
-        //todayButton = createStyledButton("Today's Schedule", MainFrame.PRIMARY_COLOR);
+        todayButton = createStyledButton("Today's Schedule", MainFrame.PRIMARY_COLOR);
         refreshButton = createStyledButton("Refresh", MainFrame.SECONDARY_COLOR);
         
         panel.add(addButton);
         panel.add(deleteButton);
-        //panel.add(todayButton);
+        panel.add(todayButton);
         panel.add(refreshButton);
         
         setupButtonHandlers();
@@ -202,7 +202,7 @@ public class SchedulePanel extends JPanel {
     private void setupButtonHandlers() {
         addButton.addActionListener(e -> showAddScheduleDialog());
         deleteButton.addActionListener(e -> deleteSelectedSchedule());
-        //todayButton.addActionListener(e -> showTodaySchedule());
+        todayButton.addActionListener(e -> showTodaySchedule());
         refreshButton.addActionListener(e -> refreshTable());
     }
     
@@ -290,10 +290,10 @@ public class SchedulePanel extends JPanel {
         formPanel.add(roomCombo, gbc);
         
         // Add session type fields
-        // gbc.gridx = 0; gbc.gridy = 3;
-        // formPanel.add(sessionTypeLabel, gbc);
-        // gbc.gridx = 1;
-        // formPanel.add(sessionTypeCombo, gbc);
+        gbc.gridx = 0; gbc.gridy = 3;
+        formPanel.add(sessionTypeLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(sessionTypeCombo, gbc);
         
         // Add day of week fields
         gbc.gridx = 0; gbc.gridy = 4;
@@ -486,15 +486,18 @@ public class SchedulePanel extends JPanel {
         }
     }
     
-    
-    // private void showTodaySchedule() {
-    //     JOptionPane.showMessageDialog(
-    //         this, 
-    //         "Today's schedule filter will be implemented with actual date filtering.",
-    //         "Today's Schedule",
-    //         JOptionPane.INFORMATION_MESSAGE
-    //     );
-    // }
+    /**
+     * Shows today's schedule (placeholder for future implementation)
+     * TODO: Implement actual filtering by today's date
+     */
+    private void showTodaySchedule() {
+        JOptionPane.showMessageDialog(
+            this, 
+            "Today's schedule filter will be implemented with actual date filtering.",
+            "Today's Schedule",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    }
     
     /**
      * Refreshes the data table
