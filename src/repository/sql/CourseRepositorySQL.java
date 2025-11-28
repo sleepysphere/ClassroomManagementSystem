@@ -15,7 +15,7 @@ public class CourseRepositorySQL {
     public static boolean addCourse(Course course) {
         // SQL query to insert a new course
         // We exclude CourseID assuming it is AUTO_INCREMENT in the database
-        String sql = "INSERT INTO courses (CourseCode, CourseName, Credits, Description, EnrollmentLimit, RequiresLab, SessionCount) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO courses (CourseCode, CourseName, Credits, EnrollmentLimit, RequiresLab, SessionCount) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -24,10 +24,9 @@ public class CourseRepositorySQL {
             stmt.setString(1, course.getCourseCode());
             stmt.setString(2, course.getCourseName());
             stmt.setDouble(3, course.getCredits());
-            stmt.setString(4, course.getDescription());
-            stmt.setInt(5, course.getEnrollmentLimit());
-            stmt.setBoolean(6, course.isRequiresLab());
-            stmt.setInt(7, course.getSessionCount());
+            stmt.setInt(4, course.getEnrollmentLimit());
+            stmt.setBoolean(5, course.isRequiresLab());
+            stmt.setInt(6, course.getSessionCount());
             
             // Execute the insert
             int rowsAffected = stmt.executeUpdate();
@@ -44,7 +43,7 @@ public class CourseRepositorySQL {
     // ---------------------------------------------------------
     public static Course getCourseById(int courseId) {
         String sql = """
-        SELECT CourseID, CourseName, CourseCode, Description,
+        SELECT CourseID, CourseName, CourseCode,
             Credits, RequiresLab, SessionCount, EnrollmentLimit, IsActive
         FROM courses
         WHERE CourseID = ?
@@ -60,7 +59,6 @@ public class CourseRepositorySQL {
                     rs.getInt("CourseID"),
                     rs.getString("CourseName"),
                     rs.getString("CourseCode"),
-                    rs.getString("Description"),
                     rs.getDouble("Credits"),
                     rs.getBoolean("RequiresLab"),
                     rs.getInt("SessionCount"),
@@ -78,21 +76,20 @@ public class CourseRepositorySQL {
     // UPDATE: Modify course details
     // ---------------------------------------------------------
     public static boolean updateCourse(Course course) {
-        String sql = "UPDATE courses SET CourseName=?, CourseCode=?, Description=?, Credits=?, RequiresLab=?, SessionCount=?, EnrollmentLimit=? WHERE CourseID=?";
+        String sql = "UPDATE courses SET CourseName=?, CourseCode=?, Credits=?, RequiresLab=?, SessionCount=?, EnrollmentLimit=? WHERE CourseID=?";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, course.getCourseName());
             stmt.setString(2, course.getCourseCode());
-            stmt.setString(3, course.getDescription());
-            stmt.setDouble(4, course.getCredits());
-            stmt.setBoolean(5, course.isRequiresLab());
-            stmt.setInt(6, course.getSessionCount());
-            stmt.setInt(7, course.getEnrollmentLimit());
+            stmt.setDouble(3, course.getCredits());
+            stmt.setBoolean(4, course.isRequiresLab());
+            stmt.setInt(5, course.getSessionCount());
+            stmt.setInt(6, course.getEnrollmentLimit());
             
             // Target ID
-            stmt.setInt(8, course.getCourseId());
+            stmt.setInt(7, course.getCourseId());
             
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -148,7 +145,7 @@ public class CourseRepositorySQL {
     public static List<Course> getAllCourses(){
     List<Course> courses = new ArrayList<>();
     String sql = """
-        SELECT CourseID, CourseName, CourseCode, Description,
+        SELECT CourseID, CourseName, CourseCode,
             Credits, RequiresLab, SessionCount, EnrollmentLimit, IsActive
         FROM courses
     """;
@@ -162,7 +159,6 @@ public class CourseRepositorySQL {
                 rs.getInt("CourseID"),
                 rs.getString("CourseName"),
                 rs.getString("CourseCode"),
-                rs.getString("Description"),
                 rs.getDouble("Credits"),
                 rs.getBoolean("RequiresLab"),
                 rs.getInt("SessionCount"),

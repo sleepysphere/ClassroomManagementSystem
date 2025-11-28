@@ -550,6 +550,20 @@ public class SchedulePanel extends JPanel {
      */
     private void refreshTable() {
         tableModel.setRowCount(0);
+        for (Schedule schedule : ScheduleRepositorySQL.getAllSchedules()) {
+            Object[] row = {
+                schedule.getClassId(),
+                schedule.getCourseId(),
+                schedule.getInstructorId(),
+                schedule.getRoomId(),
+                schedule.getDayOfWeek(),
+                schedule.getStartTime().toString(),
+                schedule.getEndTime().toString(),
+                schedule.getSemester()
+            };
+            tableModel.addRow(row);
+        }
+
         
         // Note: ScheduleRepositorySQL doesn't have getAllSchedules method
         // For now, table will be empty until you add schedules

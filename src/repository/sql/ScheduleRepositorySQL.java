@@ -5,6 +5,9 @@ import model.Schedule;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScheduleRepositorySQL {
     private ScheduleRepositorySQL() {} // Prevent instantiation
@@ -123,5 +126,35 @@ public class ScheduleRepositorySQL {
             System.err.println("Error updating schedule: " + e.getMessage());
             return false;
         }
+    }
+
+    public static List<Schedule> getAllSchedules() {
+        List<Schedule> schedules = new ArrayList<>();
+        String sql = "SELECT * FROM schedules";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Schedule schedule = new Schedule(
+                    rs.getInt("ClassID"),
+                    rs.getInt("CourseID"),
+                    rs.getInt("InstructorID"),
+                    rs.getString("SessionType"),
+                    rs.getDate("StartDate").toLocalDate(),
+                    rs.getDate("EndDate").toLocalDate(),
+                    rs.getInt("RoomID"),
+                    rs.getString("DayOfWeek"),
+                    rs.getTime("StartTime").toLocalTime(),
+                    rs.getTime("EndTime").toLocalTime(),
+                    rs.getString("Semester")
+                );
+                schedules.add(schedule);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching schedules: " + e.getMessage());
+        }
+        return schedules;
     }
 }

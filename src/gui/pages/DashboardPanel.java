@@ -53,10 +53,10 @@ public class DashboardPanel extends JPanel {
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
-        panel.add(createStatCard("Classes", "0", MainFrame.PRIMARY_COLOR));
-        panel.add(createStatCard("Rooms", "0", MainFrame.SUCCESS_COLOR));
-        panel.add(createStatCard("Schedules", "0", MainFrame.WARNING_COLOR));
-        panel.add(createStatCard("Teachers", "0", MainFrame.DANGER_COLOR));
+        panel.add(createStatCard("Classes", null, MainFrame.PRIMARY_COLOR));
+        panel.add(createStatCard("Rooms", null, MainFrame.SUCCESS_COLOR));
+        panel.add(createStatCard("Schedules", null, MainFrame.WARNING_COLOR));
+        panel.add(createStatCard("Teachers", null, MainFrame.DANGER_COLOR));
         
         return panel;
     }

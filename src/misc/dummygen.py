@@ -1,26 +1,31 @@
 import random
 
-f = open("src/misc/dummy.txt", "w")
+room_types = [
+    "Lecture Hall",
+    "Laboratory",
+    "Seminar Room",
+    "Computer Lab",
+    "Auditorium",
+    "Studio",
+    "Workshop",
+    "Conference Room"
+]
 
-i = 400
-name = ["Intro to Programming", "Data Structures", "Algorithms", "Database Systems", "Operating Systems",
-        "Computer Networks", "Software Engineering", "Web Development", "Mobile App Development"]
-code = ["CS101", "CS102", "CS201", "CS202", "CS301", "CS302", "CS401", "CS402", "CS403"]
-desc = " no description "
-credits = [3, 4, 5]
-requireslab = [False, True]
-isactive = [False, True]
-sessioncount = [10, 15, 20]
-enrollmentlimit = [30, 50, 100]
+def generate_room_number(index):
+    # Creates things like A101, B203, D450, etc.
+    building = random.choice(["A", "B", "C", "D", "E"])
+    number = 100 + index
+    return f"{building}{number}"
 
-for i in range(25):
-    courseid = i + 1
-    coursecode = random.choice(code)+str(random.randint(100, 499))
+with open("src/misc/dummy_rooms.txt", "w") as f:
+    for i in range(25):  # Generate 25 rooms
+        room_number = generate_room_number(i)
+        capacity = random.randint(20, 200)             # Typical room sizes
+        room_type = random.choice(room_types)
 
+        query = (
+            "insert into rooms (RoomNumber, Capacity, RoomType) "
+            f"values ('{room_number}', {capacity}, '{room_type}');"
+        )
 
-    query = (
-            "INSERT INTO courses "
-            "(courseid, coursename, coursecode, description, credits, requireslab, isactive, sessioncount, enrollmentlimit)"
-            f"VALUES   ('{courseid}','{coursecode}','{desc}','{random.choice(credits)}','{random.choice(requireslab)}','{random.choice(isactive)}','{random.choice(sessioncount)}','{random.choice(enrollmentlimit)}');"
-)
-    f.write(query + "\n")
+        f.write(query + "\n")
