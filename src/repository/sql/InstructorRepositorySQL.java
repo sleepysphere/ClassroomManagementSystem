@@ -35,7 +35,37 @@ public class InstructorRepositorySQL {
             return false;
         }
     }
-    
+
+    // ---------------------------------------------------------
+    // READ: Get a single instructor by ID
+    // ---------------------------------------------------------
+    public static Instructor getInstructorById(int instructorId) {
+        String sql = "SELECT * FROM instructors WHERE InstructorID = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, instructorId);
+            
+            var rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Instructor(
+                    rs.getInt("InstructorID"),
+                    rs.getString("FirstName"),
+                    rs.getString("LastName"),
+                    rs.getString("Email"),
+                    rs.getString("Phone"),
+                    rs.getString("Department"),
+                    // Handle Date conversion safely
+                    rs.getDate("HireDate") != null ? rs.getDate("HireDate").toLocalDate() : null
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching instructor: " + e.getMessage());
+        }
+        return null;
+    }
+
     // ---------------------------------------------------------
     // DELETE: Remove an instructor
     // (Warning: This will CASCADE delete all their classes!)
@@ -84,6 +114,7 @@ public class InstructorRepositorySQL {
             return false;
         }
     }
+
     public static List<Instructor> getAllInstructors() {
     List<Instructor> instructors = new ArrayList<>();
     String sql = "SELECT InstructorID, FirstName, LastName, Email, Phone, Department, HireDate FROM instructors";
@@ -110,6 +141,5 @@ public class InstructorRepositorySQL {
     }
 
     return instructors;
-}
-
+    }
 }
